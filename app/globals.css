@@ -86,6 +86,14 @@
       color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
+  /* While a theme blast view-transition is running we want the clip-path
+     animation to be the only thing moving — kill the body's own colour
+     fade so the two don't compete and look smeary. */
+  html[data-theme-blasting="1"] body,
+  html[data-theme-blasting="1"] body * {
+    transition: none !important;
+  }
+
   /* All anchored sections leave room for the floating nav (~72px tall
      when scrolled) — so jumping via the nav lands right under it. */
   section[id] {
@@ -304,5 +312,57 @@
   50% {
     opacity: 1;
     transform: scale(1.06);
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * Theme blast — View Transitions API choreography
+ *
+ * When themeBlast() calls document.startViewTransition(), the browser
+ * snapshots the page in both states and exposes two pseudo-elements:
+ *   - ::view-transition-old(root)   — the previous theme, fading out
+ *   - ::view-transition-new(root)   — the next theme, fading in
+ *
+ * We override the default fade with a circular clip-path that grows
+ * from (--blast-x, --blast-y) to --blast-r. The OLD snapshot sits
+ * still beneath — so all content stays visible while the new theme
+ * washes outward like a wave.
+ * ─────────────────────────────────────────────────────────────────── */
+
+@keyframes theme-blast-reveal {
+  from {
+    clip-path: circle(0px at var(--blast-x, 50%) var(--blast-y, 50%));
+  }
+  to {
+    clip-path: circle(
+      var(--blast-r, 150vmax) at var(--blast-x, 50%) var(--blast-y, 50%)
+    );
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Old snapshot stays put — no fade — so the user keeps seeing the
+   content throughout the transition. */
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+/* New snapshot expands from a 0px circle at the click point to a full-
+   screen circle, revealing the new theme as a slow sea-wave. */
+::view-transition-new(root) {
+  z-index: 9990;
+  animation: theme-blast-reveal 1400ms cubic-bezier(0.32, 0.94, 0.4, 1)
+    forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
   }
 }

@@ -8,12 +8,16 @@ import {
   useState,
 } from "react";
 import { playThemeChime } from "@/lib/sound";
+import { themeBlast } from "@/lib/theme-blast";
 
 type Theme = "light" | "dark";
 
 interface ThemeContextValue {
   theme: Theme;
-  toggle: () => void;
+  /** Toggle the theme. Pass an origin (viewport-space px) to play the
+   *  cinematic circular wipe + boom from that point. Omit for a silent
+   *  programmatic switch. */
+  toggle: (origin?: { x: number; y: number }) => void;
   setTheme: (t: Theme) => void;
 }
 
@@ -70,16 +74,28 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     [apply]
   );
 
-  const toggle = useCallback(() => {
-    setThemeState((prev) => {
-      const next: Theme = prev === "dark" ? "light" : "dark";
-      apply(next);
-      // Fire the sweet little chime AFTER applying so the audio feels
-      // synchronous with the visual change.
-      playThemeChime(next);
-      return next;
-    });
-  }, [apply]);
+  const toggle = useCallback(
+    (origin?: { x: number; y: number }) => {
+      setThemeState((prev) => {
+        const next: Theme = prev === "dark" ? "light" : "dark";
+        if (origin) {
+          // Cinematic path — overlay swaps the underlying theme mid-blast
+          // (via applyTheme), then removes itself once the wipe is done.
+          themeBlast({
+            from: prev,
+            to: next,
+            origin,
+            applyTheme: (t) => apply(t),
+          });
+        } else {
+          apply(next);
+          playThemeChime(next);
+        }
+        return next;
+      });
+    },
+    [apply]
+  );
 
   return (
     <ThemeContext.Provider value={{ theme, toggle, setTheme }}>

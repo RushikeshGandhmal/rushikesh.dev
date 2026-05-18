@@ -19,10 +19,21 @@ export function ThemeToggle({ className, variant = "pill" }: ThemeToggleProps) {
   const { theme, toggle } = useTheme();
   const isDark = theme === "dark";
 
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // Use the button's center as the blast origin so the wipe always
+    // emanates from the icon rather than wherever the cursor happened
+    // to be when the click landed.
+    const rect = e.currentTarget.getBoundingClientRect();
+    toggle({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+    });
+  };
+
   return (
     <button
       type="button"
-      onClick={toggle}
+      onClick={handleClick}
       data-cursor
       data-cursor-label={isDark ? "Lights on" : "Lights off"}
       aria-label={
