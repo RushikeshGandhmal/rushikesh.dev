@@ -316,6 +316,56 @@
 }
 
 /* ────────────────────────────────────────────────────────────────────
+ * Ink writer — per-character handwritten reveal used by <Typewriter />.
+ *
+ * Each character starts hidden, slightly translated down + sideways, blurred,
+ * and rotated. It blooms into place over ~620 ms — like wet ink settling on
+ * paper. Per-character delay is set inline via animation-delay, and the
+ * rotation/translate jitter is set as inline CSS custom properties so every
+ * letter has its own tiny personality without ever being random at runtime.
+ * ─────────────────────────────────────────────────────────────────── */
+.ink-writer__char {
+  display: inline-block;
+  white-space: pre;
+  opacity: 0;
+  /* Hint the compositor — these are about to animate. */
+  will-change: transform, opacity, filter;
+  transform: translate(var(--ink-tx, 0), var(--ink-ty, 0.24em))
+    rotate(var(--ink-rot, 0deg));
+  filter: blur(5px);
+  animation: ink-bloom 620ms cubic-bezier(0.2, 0.65, 0.2, 1) forwards;
+}
+@keyframes ink-bloom {
+  0% {
+    opacity: 0;
+    filter: blur(5px);
+    transform: translate(var(--ink-tx, 0), var(--ink-ty, 0.24em))
+      rotate(var(--ink-rot, 0deg));
+  }
+  40% {
+    opacity: 0.55;
+    filter: blur(1.6px);
+  }
+  72% {
+    opacity: 0.95;
+    filter: blur(0.3px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ink-writer__char {
+    animation: none !important;
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────
  * Theme blast — View Transitions API choreography
  *
  * When themeBlast() calls document.startViewTransition(), the browser

@@ -4,6 +4,7 @@ import { m as motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import dynamic from "next/dynamic";
 import { personal, marqueeStack, stats } from "@/lib/data";
+import { Typewriter } from "@/components/typewriter";
 
 // Three.js is heavy & client-only — load lazily, no SSR.
 const GenerativeArtScene = dynamic(
@@ -93,13 +94,22 @@ export function Hero() {
             <span className="h-px w-6 bg-ink/30" />
             <span>Any timezone</span>
             <span className="h-px w-6 bg-ink/30" />
-            <span className="font-hand text-base tracking-normal normal-case text-ink/70">
-              AI &middot; Frontend &middot; Backend
-            </span>
+            <span>AI &middot; Frontend &middot; Backend</span>
           </motion.div>
 
+          {/* Handwritten greeting — sits above the title, breaks the
+              formality, makes it feel like a person wrote the page. */}
+          <motion.p
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.85, ease: EASE, delay: 0.35 }}
+            className="mt-8 font-hand text-3xl leading-none text-ink/65 sm:text-4xl"
+          >
+            &mdash; hey, I&apos;m {personal.firstName}.
+          </motion.p>
+
           {/* Title */}
-          <h1 className="mt-10 font-display tracking-tight text-display-2xl">
+          <h1 className="mt-5 font-display tracking-tight text-display-2xl">
             <span className="block overflow-hidden">
               <span className="block">
                 {wordsLine1.map((w, i) => (
@@ -110,7 +120,7 @@ export function Hero() {
                     transition={{
                       duration: 1.1,
                       ease: EASE,
-                      delay: 0.3 + i * 0.08,
+                      delay: 0.65 + i * 0.08,
                     }}
                     className="mr-[0.18em] inline-block"
                   >
@@ -129,7 +139,7 @@ export function Hero() {
                     transition={{
                       duration: 1.1,
                       ease: EASE,
-                      delay: 0.55 + i * 0.08,
+                      delay: 0.9 + i * 0.08,
                     }}
                     className="mr-[0.18em] inline-block"
                   >
@@ -144,16 +154,19 @@ export function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: EASE, delay: 1.0 }}
+            transition={{ duration: 0.9, ease: EASE, delay: 1.35 }}
             className="mt-14 grid gap-10 md:grid-cols-12 md:items-end"
           >
             <div className="md:col-span-7">
-              <p className="font-hand text-2xl leading-tight text-ink/55">
-                — hey, I&apos;m {personal.firstName}.
-              </p>
-              <p className="mt-2 max-w-xl text-balance text-lg leading-relaxed text-ink/75">
-                {personal.summary}
-              </p>
+              {/* Summary is hand-written into place, character by character,
+                  with a soft ink bloom on each letter. startDelay accounts
+                  for the parent's fade-up settling. */}
+              <Typewriter
+                text={personal.summary}
+                startDelay={1700}
+                charDelay={18}
+                className="block max-w-xl text-balance text-lg leading-relaxed text-ink/75"
+              />
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <a
                   href="#projects"
@@ -189,7 +202,7 @@ export function Hero() {
                     transition={{
                       duration: 0.7,
                       ease: EASE,
-                      delay: 1.1 + i * 0.08,
+                      delay: 1.5 + i * 0.08,
                     }}
                   >
                     <div className="font-display text-3xl leading-none tracking-tight">
