@@ -141,7 +141,7 @@ export const projects: Project[] = [
     description:
       "An AI competitive-intelligence platform for operators and founders — real-time business insights, alerts and ‘what your rivals shipped this week’ digests powered by LLMs, RAG and scheduled agent workflows.",
     stack: ["Next.js", "OpenAI", "RAG", "PostgreSQL", "Vercel"],
-    href: "https://rivaly-alpha.vercel.app/",
+    href: "https://rivaly-ai.vercel.app/",
     featured: true,
     inProgress: true,
   },
@@ -153,7 +153,7 @@ export const projects: Project[] = [
     description:
       "A two-sided platform built for the open-source generation: developers find skill-matched OSS issues in under 10 seconds via semantic search, and their contributions quietly surface their profile to recruiters hunting for proven, talented engineers.",
     stack: ["Next.js", "OpenAI", "Embeddings", "pgvector", "Stripe"],
-    href: "https://onramp-seven.vercel.app/",
+    href: "https://onramp-ai.vercel.app/",
     featured: true,
     inProgress: true,
   },
