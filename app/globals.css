@@ -366,6 +366,58 @@
 }
 
 /* ────────────────────────────────────────────────────────────────────
+ * Nav hand-drawn circle — on hover (and on the active section) a loose
+ * pen circle draws itself around the nav word, as if someone circled it
+ * by hand. It sits behind the text (z-0), never blurs it, and the line
+ * stays a constant pen thickness thanks to non-scaling-stroke.
+ *
+ * pathLength={1} normalises the path so the dash math works in 0..1
+ * units regardless of the word's actual width.
+ * ─────────────────────────────────────────────────────────────────── */
+.nav-circle {
+  /* Loosen the loop slightly and tilt it for a casual, hand-made feel. */
+  transform: rotate(-1.5deg) scale(1.06);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.nav-circle path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.nav-link:hover .nav-circle {
+  opacity: 1;
+}
+.nav-link:hover .nav-circle path {
+  stroke-dashoffset: 0;
+}
+/* The active section's circle appears already drawn and just fades in via
+ * opacity — it must NOT re-draw each time the active id changes (which
+ * happens repeatedly while smooth-scrolling past sections after a click),
+ * otherwise it looks like the circle travels across every nav item. */
+.nav-circle.is-active {
+  opacity: 0.85;
+  transform: rotate(-1.5deg) scale(1.04);
+}
+.nav-circle.is-active path {
+  stroke-dashoffset: 0;
+  transition: none;
+}
+/* But once you hover the active item, let it re-draw for a lively feel. */
+.nav-link:hover .nav-circle.is-active path {
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-circle path {
+    transition: none;
+  }
+  .nav-link:hover .nav-circle path,
+  .nav-circle.is-active path {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────
  * Theme blast — View Transitions API choreography
  *
  * When themeBlast() calls document.startViewTransition(), the browser

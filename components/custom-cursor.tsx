@@ -6,6 +6,7 @@ import { m as motion, useMotionValue, useSpring } from "framer-motion";
 export function CustomCursor() {
   const [isVisible, setIsVisible] = useState(false);
   const [isPointer, setIsPointer] = useState(false);
+  const [hideRing, setHideRing] = useState(false);
   const [label, setLabel] = useState<string | null>(null);
   const [enabled, setEnabled] = useState(true);
 
@@ -37,10 +38,20 @@ export function CustomCursor() {
         "a, button, [role='button'], [data-cursor]"
       ) as HTMLElement | null;
       if (interactive) {
-        setIsPointer(true);
-        const data = interactive.getAttribute("data-cursor-label");
-        setLabel(data);
+        // Elements (e.g. nav links) can opt out of the enlarged blurred ring,
+        // which would otherwise obscure small text on hover.
+        const ignore = !!interactive.closest("[data-cursor-ignore]");
+        if (ignore) {
+          setHideRing(true);
+          setIsPointer(false);
+          setLabel(null);
+        } else {
+          setHideRing(false);
+          setIsPointer(true);
+          setLabel(interactive.getAttribute("data-cursor-label"));
+        }
       } else {
+        setHideRing(false);
         setIsPointer(false);
         setLabel(null);
       }
@@ -86,7 +97,7 @@ export function CustomCursor() {
           style={{
             width: isPointer ? 56 : 32,
             height: isPointer ? 56 : 32,
-            opacity: isVisible ? (isPointer ? 1 : 0.6) : 0,
+            opacity: isVisible && !hideRing ? (isPointer ? 1 : 0.6) : 0,
             transition: "width 0.35s cubic-bezier(0.16,1,0.3,1), height 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.25s",
             backgroundColor: isPointer ? "rgb(var(--ink) / 0.04)" : "transparent",
           }}

@@ -93,27 +93,42 @@ export function Navigation() {
                 const linkProps = {
                   href: linkFor(s.id),
                   className: cn(
-                    "group relative rounded-full px-3.5 py-1.5 text-[13px] font-medium tracking-tight transition-colors",
-                    isActive ? "text-paper" : "text-ink/70 hover:text-ink"
+                    "nav-link group relative rounded-full px-4 py-1.5 text-[13px] font-medium tracking-tight transition-colors",
+                    isActive ? "text-ink" : "text-ink/65 hover:text-ink"
                   ),
-                  "data-cursor": true,
+                  "data-cursor-ignore": true,
                 } as const;
 
                 const inner = (
                   <>
-                    {isActive && (
-                      <motion.span
-                        layoutId="nav-pill"
-                        className="absolute inset-0 -z-0 rounded-full bg-ink"
-                        transition={{ type: "spring", duration: 0.6, bounce: 0.18 }}
-                      />
-                    )}
                     <span className="relative z-10 flex items-center gap-1.5">
                       <span className="font-mono text-[10px] opacity-50">
                         {s.number}
                       </span>
                       {s.label}
                     </span>
+                    {/* Hand-drawn pen circle — draws itself on hover, stays
+                        drawn on the active section. Sits behind the text and
+                        never blurs it. */}
+                    <svg
+                      aria-hidden
+                      viewBox="0 0 120 50"
+                      preserveAspectRatio="none"
+                      className={cn(
+                        "nav-circle pointer-events-none absolute inset-0 z-0 h-full w-full overflow-visible text-accent",
+                        isActive && "is-active"
+                      )}
+                    >
+                      <path
+                        d="M97 11C71 3 35 3 18 12C3 20 6 37 31 43C59 50 101 46 110 32C116 23 108 11 79 8"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        vectorEffect="non-scaling-stroke"
+                        pathLength={1}
+                      />
+                    </svg>
                   </>
                 );
 
