@@ -100,15 +100,6 @@
     scroll-margin-top: 88px;
   }
 
-  /* Below-fold sections (everything except hero) get content-visibility:auto
-     so the browser can skip rendering work for offscreen content. Each one
-     declares a contain-intrinsic-size so the scrollbar still behaves and
-     anchor jumps remain accurate. */
-  section[id]:not(#home) {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 800px;
-  }
-
   ::selection {
     background: rgb(var(--ink));
     color: rgb(var(--paper));
